@@ -18,7 +18,7 @@ function onRequest (req, res) {
 
   res.setHeader('Content-Type', 'text/html')
   rs.pipe(res)
-  
+
   rs.on('error', function(err) {
     res.setHeader('Content-Type', 'text/plain')
     res.end(err.message)
@@ -27,5 +27,5 @@ function onRequest (req, res) {
 }
 
 function onListening () {
-  console.log('Server running on port' + port)
+  console.log(`Server running on port ${port}`)
 }
