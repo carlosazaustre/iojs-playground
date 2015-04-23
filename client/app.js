@@ -1,12 +1,13 @@
 'use strict'
 
+const xhr = require('xhr')
 const Webrtc2Images = require('webrtc2images')
 
 const rtc = new Webrtc2Images({
   width: 200,
   height: 200,
   frames: 10,
-  type: 'images/jpeg',
+  type: 'image/jpeg',
   quality: 0.4,
   interval: 200
 })
@@ -25,7 +26,18 @@ function onClickRecord(e) {
   rtc.recordVideo(function (err, frames) {
     if (err) return logError(err)
 
-    console.log(frames)
+    xhr({
+      uri: '/process',
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images: frames }),
+    }, onXHRComplete)
+
+    function onXHRComplete (err, res, body) {
+      if(err) return logError(err)
+      console.log(JSON.parse(body))
+    }
+
   })
 }
 
