@@ -58,6 +58,21 @@ module.exports = function (images) {
       if (err) return done(err)
 
       // Delete files
+      deleteFiles(files, done)
+    })
+  }
+
+  // Delete all files
+  function deleteFiles (files, done) {
+    async.each(files, deleteFile, done)
+  }
+
+  // Delete One file
+  function deleteFile (file, done) {
+    events.emit('log', `Deleting file ${ file }`)
+
+    fs.unlink(path.join(tmpDir, file), function(err) {
+      // ignore error
       done()
     })
   }
