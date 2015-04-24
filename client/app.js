@@ -2,6 +2,8 @@
 
 const xhr = require('xhr')
 const Webrtc2Images = require('webrtc2images')
+const domify = require('domify')
+const messageTpl = require('./templates/message.hbs')
 
 const rtc = new Webrtc2Images({
   width: 200,
@@ -16,14 +18,20 @@ rtc.startVideo(function (err) {
   if (err) return logError(err)
 })
 
-const record = document.querySelector('#record')
+const messages = document.querySelector('#messages')
+const form = document.querySelector('form')
 
-record.addEventListener('click', onClickRecord, false)
-
-function onClickRecord(e) {
+form.addEventListener('submit', function(e) {
   e.preventDefault()
+  record()
+}, false)
 
-  rtc.recordVideo(function (err, frames) {
+function record () {
+  const input = document.querySelector('input[name="message"]')
+  const message = input.value
+  input.value = ""
+
+  rtc.recordVideo(function(err, frames) {
     if (err) return logError(err)
 
     xhr({
@@ -31,23 +39,25 @@ function onClickRecord(e) {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ images: frames }),
-    }, onXHRComplete)
-
-    function onXHRComplete (err, res, body) {
-      if(err) return logError(err)
+    }, function (err, res, body) {
+      if (err) return logError(err)
 
       body = JSON.parse(body)
 
       if (body.video) {
-        const video = document.querySelector('#video')
-        video.src = body.video
-        video.loop = true
-        video.play()
+        addMessage({ message: message, video: body.video })
       }
-    }
+    })
 
   })
 }
+
+function addMessage (message) {
+  const m = messageTpl(message)
+  messages.appendChild(domify(m))
+  window.scrollTo(0, document.body.scrollHeight)
+}
+
 
 function logError (err) {
   console.error(err)

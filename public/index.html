@@ -3,14 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
-  <title> IO.js</title>
+  <title>IO.js</title>
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-  <div id="video-preview"></div>
-  <video id="video" width="200" height="300"></video>
-  <button id="record">Record</button>
+  <section>
+    <ul id="messages"></ul>
+  </section>
+  <footer>
+    <div id="video-preview"></div>
+    <form>
+      <input type="text" name="message">
+    </form>
+  </footer>
   <script src="/app.js"></script>
 </body>
 </html>
