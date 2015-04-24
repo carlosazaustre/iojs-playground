@@ -10,8 +10,8 @@ module.exports = function (options, callback) {
 
   let folder = options.folder || os.tmpDir()
   let baseName = options.baseName
-  let fileSrc = path.join( folder, `${ baseName }-%d.jpg` )
-  let fileDest = path.join( folder, `${ baseName }.webm` )
+  let fileSrc = path.join(folder, `${baseName}-%d.jpg`)
+  let fileDest = path.join(folder, `${baseName}.webm`)
 
   // Command to use:
   // ffmpeg -i images-%d.jpg -filter:v "setpts=2.5*PTS" -vcodec libvpx -an video.webm

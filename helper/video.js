@@ -32,20 +32,19 @@ module.exports = function (images) {
 
   // Decode a single Image
   function decodeImage (image, done) {
-    let fileName = `${ baseName }-${ count++ }.jpg`
+    let fileName = `${baseName}-${count++}.jpg`
     let buffer = dataURIBuffer(image)
     let ws = fs.createWriteStream( path.join( tmpDir, fileName ) )
 
     ws.on('error', done)
-
-    ws.end(buffer, done)
+      .end(buffer, done)
 
     events.emit('log', `Converting ${ fileName }`)
   }
 
   // Create video from images with ffmpeg
   function createVideo (done) {
-    events.emit('log', 'Creating video')
+    events.emit('log', `Creating video ${ baseName } on ${ tmpDir }`)
 
     ffmpeg({
       baseName: baseName,
@@ -58,10 +57,10 @@ module.exports = function (images) {
     let fileName = `${ baseName }.webm`
     let rs = fs.createReadStream(path.join( tmpDir, fileName ))
 
-    events.emit('log', `Encoding video ${ fileName }`)
+    events.emit('log', `Encoding video ${ fileName } from ${ tmpDir }`)
 
     rs.pipe(concat(function (videoBuffer) {
-      video = `data:video/webm;base64,${ videoBuffer.toString('base64') }`
+      video = `data:video/webm;base64,${videoBuffer.toString('base64')}`
       done()
     }))
 
@@ -89,7 +88,7 @@ module.exports = function (images) {
   function deleteFile (file, done) {
     events.emit('log', `Deleting file ${ file }`)
 
-    fs.unlink(path.join(tmpDir, file), function(err) {
+    fs.unlink(path.join(tmpDir, file), function (err) {
       // ignore error
       done()
     })
