@@ -1,12 +1,13 @@
 'use strict'
 
-const xhr = require('xhr')
 const Webrtc2Images = require('webrtc2images')
 const domify = require('domify')
 const io = require('socket.io-client')
+const uuid = require('uuid')
 const messageTpl = require('./templates/message.hbs')
 
-io.connect()
+const socket = io.connect()
+const id = uuid.v4()
 
 const rtc = new Webrtc2Images({
   width: 200,
@@ -29,6 +30,14 @@ form.addEventListener('submit', function(e) {
   record()
 }, false)
 
+socket.on('message', addMessage)
+
+socket.on('messageack', function (message) {
+  if (message.id === id) {
+    addMessage(message)
+  }
+})
+
 function record () {
   const input = document.querySelector('input[name="message"]')
   const message = input.value
@@ -36,22 +45,8 @@ function record () {
 
   rtc.recordVideo(function(err, frames) {
     if (err) return logError(err)
-
-    xhr({
-      uri: '/process',
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ images: frames }),
-    }, function (err, res, body) {
-      if (err) return logError(err)
-
-      body = JSON.parse(body)
-
-      if (body.video) {
-        addMessage({ message: message, video: body.video })
-      }
-    })
-
+    
+    socket.emit('message', { id: id, message: message, frames: frames  })
   })
 }
 
