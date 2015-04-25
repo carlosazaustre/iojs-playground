@@ -22,6 +22,9 @@ module.exports = function (server) {
         delete message.frames
         message.video = video
 
+        // Save messages
+        db.save(message, function (err) {})
+
         // Send video to everyone
         socket.broadcast.emit('message', message)
 
