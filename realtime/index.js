@@ -1,11 +1,13 @@
 'use strict'
 
 const socketio = require('socket.io')
+const database = require('../database')
 const helper = require('../helper')
 
 module.exports = function (server) {
-
+  const db = database()
   const io = socketio(server)
+
   io.on('connection', onConnection)
 
   function onConnection (socket) {
