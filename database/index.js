@@ -13,11 +13,6 @@ module.exports = function (options) {
 
   const db = ttl(level('./messages.db'), { checkFrequency: 10000 })
 
-  return {
-    save: save,
-    list: list
-  }
-
   function save (message, callback) {
     let key = `message-${Date.now()}-${uuid.v4()}`
     let options = {
@@ -41,6 +36,11 @@ module.exports = function (options) {
     }))
 
     rs.on('error', callback)
+  }
+
+  return {
+    save: save,
+    list: list
   }
 
 }
