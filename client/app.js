@@ -38,6 +38,10 @@ socket.on('messageack', function (message) {
   }
 })
 
+socket.on('messages', function (messages) {
+  messages.forEach(addMessage)
+})
+
 function record () {
   const input = document.querySelector('input[name="message"]')
   const message = input.value
@@ -45,7 +49,7 @@ function record () {
 
   rtc.recordVideo(function(err, frames) {
     if (err) return logError(err)
-    
+
     socket.emit('message', { id: id, message: message, frames: frames  })
   })
 }

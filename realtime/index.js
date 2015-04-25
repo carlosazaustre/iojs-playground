@@ -13,6 +13,12 @@ module.exports = function (server) {
   function onConnection (socket) {
     console.log(`Client connected ${socket.id}`)
 
+    db.list(function (err, messages) {
+      if (err) console.log(err)
+
+      socket.emit('messages', messages)
+    })
+
     socket.on('message', function (message) {
       const converter = helper.convertVideo(message.frames)
 
@@ -23,7 +29,9 @@ module.exports = function (server) {
         message.video = video
 
         // Save messages
-        db.save(message, function (err) {})
+        db.save(message, function (err) {
+          if (err) return console.log(err)
+        })
 
         // Send video to everyone
         socket.broadcast.emit('message', message)
